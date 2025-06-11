@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>바카라 게임</title>
+    <style>
+        body { text-align: center; font-family: sans-serif; }
+        .cards img { width: 100px; margin: 5px; }
+        .winner { font-size: 24px; font-weight: bold; margin-top: 20px; }
+        .topbar { margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <div class="topbar">
+        {% if user %}
+            <p>👤 로그인 중: <strong>{{ user.username }}</strong></p>
+            <p>💰 보유 칩: <strong>{{ user.chips }}</strong></p>
+            <form action="/logout" method="get" style="display: inline;">
+                <button type="submit">🚪 로그아웃</button>
+            </form>
+        {% else %}
+            <a href="/login">🔑 로그인</a> |
+            <a href="/register">📝 회원가입</a>
+        {% endif %}
+    </div>
+
+    <h1>🐖 돼지 게임</h1>
+
+    <form method="post" action="/game">
+        <label>배팅 대상:</label>
+        <select name="bet_target">
+            <option value="player">Player</option>
+            <option value="banker">Banker</option>
+            <option value="tie">Tie</option>
+        </select><br><br>
+
+        <label>배팅 금액:</label>
+        <input type="number" name="bet_amount" min="1" max="10000" required><br><br>
+
+        <button type="submit">게임 시작</button>
+    </form>
+
+    {% if result %}
+        <h2>👤 Player</h2>
+        <div class="cards">
+            {% for card in result.player.cards %}
+                <img src="https://deckofcardsapi.com/static/img/{{ card }}.png">
+            {% endfor %}
+        </div>
+        <p>점수: {{ result.player.score }}</p>
+
+        <h2>🏦 Banker</h2>
+        <div class="cards">
+            {% for card in result.banker.cards %}
+                <img src="https://deckofcardsapi.com/static/img/{{ card }}.png">
+            {% endfor %}
+        </div>
+        <p>점수: {{ result.banker.score }}</p>
+
+        <div class="winner">
+            🏆 결과: {{ result.winner | upper }} 승!<br>
+            {% if result.bet_win %}
+                ✅ 배팅 성공! +{{ result.bet_change }} 칩<br>
+            {% else %}
+                ❌ 배팅 실패... -{{ result.bet_change }} 칩<br>
+            {% endif %}
+            💰 현재 칩: {{ result.final_chips }}
+        </div>
+    {% endif %}
+</body>
+</html>
