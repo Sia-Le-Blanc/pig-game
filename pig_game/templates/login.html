@@ -1,29 +1,219 @@
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>로그인</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎰 바카라 게임 - 로그인</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0c0c0c 0%, #1a1a1a 50%, #0c0c0c 100%);
+            color: white;
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .login-container {
+            background: linear-gradient(145deg, #2c3e50, #34495e);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border: 2px solid #555;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+        }
+        
+        .logo {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+        
+        h2 {
+            color: #3fefc2;
+            margin-bottom: 30px;
+            font-size: 24px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #ecf0f1;
+            font-weight: bold;
+        }
+        
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border: 2px solid #555;
+            border-radius: 8px;
+            background-color: #34495e;
+            color: white;
+            transition: border-color 0.3s ease;
+        }
+        
+        input[type="text"]:focus, input[type="password"]:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 10px rgba(52, 152, 219, 0.3);
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 15px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(145deg, #3498db, #2980b9);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(145deg, #27ae60, #229954);
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(39, 174, 96, 0.4);
+        }
+        
+        .error-message {
+            background-color: #e74c3c;
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #c0392b;
+        }
+        
+        .success-message {
+            background-color: #27ae60;
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #2ecc71;
+        }
+        
+        .divider {
+            margin: 25px 0;
+            border: none;
+            border-top: 1px solid #555;
+        }
+        
+        .register-link {
+            margin-top: 20px;
+        }
+        
+        .test-accounts {
+            background-color: #34495e;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            border: 1px solid #555;
+        }
+        
+        .test-accounts h4 {
+            color: #f39c12;
+            margin: 0 0 10px 0;
+            font-size: 14px;
+        }
+        
+        .test-accounts p {
+            margin: 5px 0;
+            font-size: 12px;
+            color: #bdc3c7;
+        }
+    </style>
 </head>
 <body>
-    <h2>🔑 로그인</h2>
+    <div class="login-container">
+        <div class="logo">🎰</div>
+        <h2>바카라 게임 로그인</h2>
 
-    <form method="post" action="/login">
-        <label>사용자명:</label>
-        <input type="text" name="username" required><br><br>
+        {% if error %}
+            <div class="error-message">
+                ⚠️ {{ error }}
+            </div>
+        {% endif %}
 
-        <label>비밀번호:</label>
-        <input type="password" name="password" required><br><br>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="{{ 'success-message' if category == 'success' else 'error-message' }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
 
-        <button type="submit">로그인</button>
-    </form>
+        <form method="post" action="/login">
+            <div class="form-group">
+                <label for="username">사용자명</label>
+                <input type="text" id="username" name="username" required placeholder="사용자명을 입력하세요">
+            </div>
 
-    {% if error %}
-        <p style="color: red;">⚠️ {{ error }}</p>
-    {% endif %}
+            <div class="form-group">
+                <label for="password">비밀번호</label>
+                <input type="password" id="password" name="password" required placeholder="비밀번호를 입력하세요">
+            </div>
 
-    <hr>
-    <form action="/register" method="get">
-        <button type="submit">📝 회원가입</button>
-    </form>
+            <button type="submit" class="btn btn-primary">🎮 게임 시작</button>
+        </form>
+
+        <hr class="divider">
+
+        <div class="register-link">
+            <form action="/register" method="get">
+                <button type="submit" class="btn btn-secondary">📝 새 계정 만들기</button>
+            </form>
+        </div>
+
+        <div class="test-accounts">
+            <h4>🧪 테스트 계정</h4>
+            <p><strong>admin</strong> / admin (관리자, 100,000 칩)</p>
+            <p><strong>test1</strong> / 1234 (일반 유저, 10,000 칩)</p>
+            <p><strong>test2</strong> / 1234 (일반 유저, 10,000 칩)</p>
+        </div>
+    </div>
+
+    <script>
+        // 자동 포커스
+        document.getElementById('username').focus();
+        
+        // 엔터키로 폼 제출
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                document.querySelector('form').submit();
+            }
+        });
+    </script>
 </body>
 </html>

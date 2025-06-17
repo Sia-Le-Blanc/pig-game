@@ -1,71 +1,168 @@
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <title>바카라 게임</title>
-    <style>
-        body { text-align: center; font-family: sans-serif; }
-        .cards img { width: 100px; margin: 5px; }
-        .winner { font-size: 24px; font-weight: bold; margin-top: 20px; }
-        .topbar { margin-bottom: 20px; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🐖 돼지 게임</title>
+  <link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body>
-    <div class="topbar">
-        {% if user %}
-            <p>👤 로그인 중: <strong>{{ user.username }}</strong></p>
-            <p>💰 보유 칩: <strong>{{ user.chips }}</strong></p>
-            <form action="/logout" method="get" style="display: inline;">
-                <button type="submit">🚪 로그아웃</button>
-            </form>
-        {% else %}
-            <a href="/login">🔑 로그인</a> |
-            <a href="/register">📝 회원가입</a>
-        {% endif %}
+  <!-- 상단 유저 정보 -->
+  <div class="user-info">
+    <div class="user-name">{{ user.username }}</div>
+    <div class="user-chips">💰 <span id="user-chips">{{ user.chips | default(0) }}</span> 칩</div>
+    <a href="/logout" class="logout-btn">로그아웃</a>
+  </div>
+
+  <!-- 게임 상태 표시 -->
+  <div class="game-status">
+    <div class="timer">
+      ⏲ <span id="timer-display">--:--</span>
+      <div class="timer-bar">
+        <div id="timer-progress" class="timer-fill"></div>
+      </div>
+    </div>
+    <div class="game-state">
+      <span id="game-state-text">게임 준비중...</span>
+      <span id="round-number">라운드 #1</span>
+    </div>
+  </div>
+
+  <!-- 점수 및 결과 -->
+  <div class="score-section">
+    <div class="score-line">
+      <div class="banker-score">
+        BANKER <span id="banker-score">-</span>
+      </div>
+      <div class="result-text" id="game-result">
+        🎯 게임 진행중
+      </div>
+      <div class="player-score">
+        <span id="player-score">-</span> PLAYER
+      </div>
+    </div>
+  </div>
+
+  <!-- 메인 게임 보드 -->
+  <div class="main-board">
+    <!-- 왼쪽 유저 슬롯 -->
+    <div class="user-slot left-users">
+      <div class="user-box" id="user-slot-0">
+        <div class="username">-</div>
+        <div class="chips">💰 0</div>
+        <div class="status">대기중</div>
+      </div>
+      <div class="user-box" id="user-slot-1">
+        <div class="username">-</div>
+        <div class="chips">💰 0</div>
+        <div class="status">대기중</div>
+      </div>
     </div>
 
-    <h1>🐖 돼지 게임</h1>
-
-    <form method="post" action="/game">
-        <label>배팅 대상:</label>
-        <select name="bet_target">
-            <option value="player">Player</option>
-            <option value="banker">Banker</option>
-            <option value="tie">Tie</option>
-        </select><br><br>
-
-        <label>배팅 금액:</label>
-        <input type="number" name="bet_amount" min="1" max="10000" required><br><br>
-
-        <button type="submit">게임 시작</button>
-    </form>
-
-    {% if result %}
-        <h2>👤 Player</h2>
-        <div class="cards">
-            {% for card in result.player.cards %}
-                <img src="https://deckofcardsapi.com/static/img/{{ card }}.png">
-            {% endfor %}
+    <!-- 중앙 카드 영역 -->
+    <div class="game-board">
+      <!-- 카드 표시 -->
+      <div class="card-area">
+        <div class="card-row">
+          <div class="card-section banker-cards">
+            <h3>🏪 BANKER</h3>
+            <div class="card-set" id="banker-cards">
+              <div class="card-placeholder">?</div>
+              <div class="card-placeholder">?</div>
+            </div>
+          </div>
+          <div class="card-section player-cards">
+            <h3>👤 PLAYER</h3>
+            <div class="card-set" id="player-cards">
+              <div class="card-placeholder">?</div>
+              <div class="card-placeholder">?</div>
+            </div>
+          </div>
         </div>
-        <p>점수: {{ result.player.score }}</p>
+      </div>
 
-        <h2>🏦 Banker</h2>
-        <div class="cards">
-            {% for card in result.banker.cards %}
-                <img src="https://deckofcardsapi.com/static/img/{{ card }}.png">
-            {% endfor %}
+      <!-- 베팅 현황 -->
+      <div class="betting-info">
+        <div class="bet-totals">
+          <div class="bet-total banker-total">
+            <div class="label">BANKER</div>
+            <div class="amount" id="banker-total">0</div>
+          </div>
+          <div class="bet-total tie-total">
+            <div class="label">TIE</div>
+            <div class="amount" id="tie-total">0</div>
+          </div>
+          <div class="bet-total player-total">
+            <div class="label">PLAYER</div>
+            <div class="amount" id="player-total">0</div>
+          </div>
         </div>
-        <p>점수: {{ result.banker.score }}</p>
+      </div>
+    </div>
 
-        <div class="winner">
-            🏆 결과: {{ result.winner | upper }} 승!<br>
-            {% if result.bet_win %}
-                ✅ 배팅 성공! +{{ result.bet_change }} 칩<br>
-            {% else %}
-                ❌ 배팅 실패... -{{ result.bet_change }} 칩<br>
-            {% endif %}
-            💰 현재 칩: {{ result.final_chips }}
-        </div>
-    {% endif %}
+    <!-- 오른쪽 유저 슬롯 -->
+    <div class="user-slot right-users">
+      <div class="user-box" id="user-slot-2">
+        <div class="username">-</div>
+        <div class="chips">💰 0</div>
+        <div class="status">대기중</div>
+      </div>
+      <div class="user-box" id="user-slot-3">
+        <div class="username">-</div>
+        <div class="chips">💰 0</div>
+        <div class="status">대기중</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 베팅 버튼 -->
+  <div class="betting-section">
+    <div class="bet-amount-selector">
+      <label>베팅 금액:</label>
+      <input type="number" id="bet-amount" min="100" max="50000" step="100" value="1000">
+      <div class="quick-amounts">
+        <button class="quick-bet" data-amount="500">500</button>
+        <button class="quick-bet" data-amount="1000">1K</button>
+        <button class="quick-bet" data-amount="5000">5K</button>
+        <button class="quick-bet" data-amount="10000">10K</button>
+      </div>
+    </div>
+
+    <div class="bet-buttons">
+      <button class="btn bpair" data-target="banker_pair" disabled>
+        <div class="btn-label">B.PAIR</div>
+        <div class="btn-odds">11:1</div>
+      </button>
+      <button class="btn banker" data-target="banker" disabled>
+        <div class="btn-label">BANKER</div>
+        <div class="btn-odds">19:20</div>
+      </button>
+      <button class="btn tie" data-target="tie" disabled>
+        <div class="btn-label">TIE</div>
+        <div class="btn-odds">8:1</div>
+      </button>
+      <button class="btn player" data-target="player" disabled>
+        <div class="btn-label">PLAYER</div>
+        <div class="btn-odds">1:1</div>
+      </button>
+      <button class="btn ppair" data-target="player_pair" disabled>
+        <div class="btn-label">P.PAIR</div>
+        <div class="btn-odds">11:1</div>
+      </button>
+    </div>
+  </div>
+
+  <!-- 내 베팅 현황 -->
+  <div class="my-bets" id="my-bets" style="display: none;">
+    <h3>🎯 내 베팅</h3>
+    <div id="my-bets-list"></div>
+    <div class="total-bet">총 베팅: <span id="my-total-bet">0</span> 칩</div>
+  </div>
+
+  <!-- 알림 메시지 -->
+  <div id="notification" class="notification"></div>
+
+  <!-- JavaScript -->
+  <script src="/static/js/game.js"></script>
 </body>
 </html>

@@ -1,24 +1,266 @@
-<!-- templates/register.html -->
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>회원가입</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎰 바카라 게임 - 회원가입</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0c0c0c 0%, #1a1a1a 50%, #0c0c0c 100%);
+            color: white;
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .register-container {
+            background: linear-gradient(145deg, #2c3e50, #34495e);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border: 2px solid #555;
+            max-width: 450px;
+            width: 90%;
+            text-align: center;
+        }
+        
+        .logo {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+        
+        h2 {
+            color: #3fefc2;
+            margin-bottom: 30px;
+            font-size: 24px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #ecf0f1;
+            font-weight: bold;
+        }
+        
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border: 2px solid #555;
+            border-radius: 8px;
+            background-color: #34495e;
+            color: white;
+            transition: border-color 0.3s ease;
+        }
+        
+        input[type="text"]:focus, input[type="password"]:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 10px rgba(52, 152, 219, 0.3);
+        }
+        
+        .form-hint {
+            font-size: 12px;
+            color: #95a5a6;
+            margin-top: 5px;
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 15px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(145deg, #27ae60, #229954);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(39, 174, 96, 0.4);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(145deg, #95a5a6, #7f8c8d);
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(149, 165, 166, 0.4);
+        }
+        
+        .error-message {
+            background-color: #e74c3c;
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #c0392b;
+        }
+        
+        .divider {
+            margin: 25px 0;
+            border: none;
+            border-top: 1px solid #555;
+        }
+        
+        .back-link {
+            margin-top: 20px;
+        }
+        
+        .info-box {
+            background-color: #3498db;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #2980b9;
+            text-align: left;
+        }
+        
+        .info-box h4 {
+            margin: 0 0 10px 0;
+            color: white;
+            font-size: 16px;
+        }
+        
+        .info-box ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        
+        .info-box li {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+    </style>
 </head>
 <body>
-    <h2>회원가입</h2>
-    <form method="post" action="/register">
-        <label>사용자명:</label>
-        <input type="text" name="username" required><br><br>
+    <div class="register-container">
+        <div class="logo">🎰</div>
+        <h2>새 계정 만들기</h2>
 
-        <label>비밀번호:</label>
-        <input type="password" name="password" required><br><br>
+        {% if error %}
+            <div class="error-message">
+                ⚠️ {{ error }}
+            </div>
+        {% endif %}
 
-        <button type="submit">가입하기</button>
-    </form>
+        <div class="info-box">
+            <h4>🎁 신규 가입 혜택</h4>
+            <ul>
+                <li>💰 기본 10,000 칩 지급</li>
+                <li>🎮 즉시 게임 참여 가능</li>
+                <li>🏆 실시간 멀티플레이어 바카라</li>
+            </ul>
+        </div>
 
-    {% if error %}
-        <p style="color: red;">⚠️ {{ error }}</p>
-    {% endif %}
+        <form method="post" action="/register" id="registerForm">
+            <div class="form-group">
+                <label for="username">사용자명</label>
+                <input type="text" id="username" name="username" required 
+                       placeholder="3자 이상 입력하세요" minlength="3" maxlength="20">
+                <div class="form-hint">3~20자의 영문, 숫자 조합</div>
+            </div>
+
+            <div class="form-group">
+                <label for="password">비밀번호</label>
+                <input type="password" id="password" name="password" required 
+                       placeholder="4자 이상 입력하세요" minlength="4">
+                <div class="form-hint">4자 이상 입력하세요</div>
+            </div>
+
+            <div class="form-group">
+                <label for="password-confirm">비밀번호 확인</label>
+                <input type="password" id="password-confirm" name="password-confirm" required 
+                       placeholder="비밀번호를 다시 입력하세요">
+                <div class="form-hint" id="password-match-hint"></div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">🚀 계정 생성하기</button>
+        </form>
+
+        <hr class="divider">
+
+        <div class="back-link">
+            <a href="/login">
+                <button type="button" class="btn btn-secondary">⬅️ 로그인으로 돌아가기</button>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // 자동 포커스
+        document.getElementById('username').focus();
+        
+        // 비밀번호 확인 검증
+        const password = document.getElementById('password');
+        const passwordConfirm = document.getElementById('password-confirm');
+        const hint = document.getElementById('password-match-hint');
+        
+        function checkPasswordMatch() {
+            if (passwordConfirm.value === '') {
+                hint.textContent = '';
+                hint.style.color = '#95a5a6';
+                return;
+            }
+            
+            if (password.value === passwordConfirm.value) {
+                hint.textContent = '✅ 비밀번호가 일치합니다';
+                hint.style.color = '#27ae60';
+            } else {
+                hint.textContent = '❌ 비밀번호가 일치하지 않습니다';
+                hint.style.color = '#e74c3c';
+            }
+        }
+        
+        password.addEventListener('input', checkPasswordMatch);
+        passwordConfirm.addEventListener('input', checkPasswordMatch);
+        
+        // 폼 제출 시 검증
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            if (password.value !== passwordConfirm.value) {
+                e.preventDefault();
+                alert('비밀번호가 일치하지 않습니다.');
+                passwordConfirm.focus();
+                return false;
+            }
+            
+            if (password.value.length < 4) {
+                e.preventDefault();
+                alert('비밀번호는 4자 이상이어야 합니다.');
+                password.focus();
+                return false;
+            }
+            
+            if (document.getElementById('username').value.length < 3) {
+                e.preventDefault();
+                alert('사용자명은 3자 이상이어야 합니다.');
+                document.getElementById('username').focus();
+                return false;
+            }
+        });
+    </script>
 </body>
 </html>

@@ -1,0 +1,524 @@
+/* 바카라 게임 스타일 */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background: linear-gradient(135deg, #0c0c0c 0%, #1a1a1a 50%, #0c0c0c 100%);
+  color: white;
+  font-family: 'Arial', sans-serif;
+  text-align: center;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* 상단 유저 정보 */
+.user-info {
+  background-color: #1e1e1e;
+  padding: 10px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid #333;
+}
+
+.user-name {
+  font-weight: bold;
+  font-size: 18px;
+  color: #3fefc2;
+}
+
+.user-chips {
+  font-size: 16px;
+  color: #f39c12;
+  font-weight: bold;
+}
+
+.logout-btn {
+  background-color: #e74c3c;
+  color: white;
+  padding: 5px 15px;
+  text-decoration: none;
+  border-radius: 5px;
+  font-size: 14px;
+  transition: background-color 0.3s;
+}
+
+.logout-btn:hover {
+  background-color: #c0392b;
+}
+
+/* 게임 상태 섹션 */
+.game-status {
+  padding: 15px 0;
+  background-color: #2c2c2c;
+  border-bottom: 1px solid #444;
+}
+
+.timer {
+  font-size: 18px;
+  color: #3498db;
+  margin-bottom: 10px;
+  position: relative;
+}
+
+.timer-bar {
+  width: 200px;
+  height: 8px;
+  background-color: #555;
+  border-radius: 4px;
+  margin: 5px auto;
+  overflow: hidden;
+}
+
+.timer-fill {
+  height: 100%;
+  background-color: #3498db;
+  transition: width 0.3s ease;
+  border-radius: 4px;
+}
+
+.game-state {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  align-items: center;
+  margin-top: 10px;
+}
+
+#game-state-text {
+  font-size: 16px;
+  font-weight: bold;
+  color: #3fefc2;
+}
+
+#round-number {
+  font-size: 14px;
+  color: #95a5a6;
+}
+
+/* 점수 섹션 */
+.score-section {
+  padding: 15px 0;
+  background-color: #34495e;
+}
+
+.score-line {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.banker-score, .player-score {
+  color: #ecf0f1;
+  min-width: 120px;
+}
+
+.result-text {
+  font-size: 28px;
+  font-weight: bold;
+  color: #3fefc2;
+  min-width: 200px;
+}
+
+.result-text.player { color: #3498db; }
+.result-text.banker { color: #e74c3c; }
+.result-text.tie { color: #2ecc71; }
+
+/* 메인 보드 */
+.main-board {
+  display: flex;
+  justify-content: space-between;
+  padding: 20px;
+  min-height: 400px;
+}
+
+/* 유저 슬롯 */
+.user-slot {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  width: 150px;
+}
+
+.user-box {
+  background: linear-gradient(145deg, #2c3e50, #34495e);
+  border: 2px solid #555;
+  padding: 15px;
+  border-radius: 12px;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  min-height: 80px;
+}
+
+.user-box.active {
+  border-color: #3fefc2;
+  box-shadow: 0 0 10px rgba(63, 239, 194, 0.3);
+}
+
+.user-box .username {
+  font-weight: bold;
+  color: #3fefc2;
+  margin-bottom: 5px;
+}
+
+.user-box .chips {
+  color: #f39c12;
+  margin-bottom: 5px;
+}
+
+.user-box .status {
+  color: #95a5a6;
+  font-size: 12px;
+}
+
+/* 게임 보드 중앙 */
+.game-board {
+  flex-grow: 1;
+  max-width: 600px;
+  margin: 0 20px;
+}
+
+.card-area {
+  margin-bottom: 30px;
+}
+
+.card-row {
+  display: flex;
+  justify-content: space-around;
+  gap: 20px;
+}
+
+.card-section {
+  flex: 1;
+  padding: 20px;
+  background: linear-gradient(145deg, #1a1a1a, #2c2c2c);
+  border-radius: 15px;
+  border: 2px solid #444;
+}
+
+.card-section h3 {
+  margin: 0 0 15px 0;
+  font-size: 18px;
+  color: #3fefc2;
+}
+
+.card-set {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  min-height: 120px;
+  align-items: center;
+}
+
+.card {
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  transition: transform 0.3s ease;
+}
+
+.card:hover {
+  transform: scale(1.05);
+}
+
+.card-placeholder {
+  width: 80px;
+  height: 112px;
+  background: linear-gradient(145deg, #555, #777);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: #ccc;
+  margin: 5px;
+  border: 2px dashed #999;
+}
+
+/* 베팅 정보 */
+.betting-info {
+  margin-top: 20px;
+}
+
+.bet-totals {
+  display: flex;
+  justify-content: space-around;
+  gap: 15px;
+}
+
+.bet-total {
+  background: linear-gradient(145deg, #2c3e50, #34495e);
+  padding: 15px;
+  border-radius: 10px;
+  border: 1px solid #555;
+  flex: 1;
+}
+
+.bet-total .label {
+  font-size: 14px;
+  color: #bdc3c7;
+  margin-bottom: 5px;
+}
+
+.bet-total .amount {
+  font-size: 18px;
+  font-weight: bold;
+  color: #f39c12;
+}
+
+/* 베팅 섹션 */
+.betting-section {
+  padding: 20px;
+  background-color: #2c2c2c;
+  border-top: 2px solid #444;
+}
+
+.bet-amount-selector {
+  margin-bottom: 20px;
+}
+
+.bet-amount-selector label {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: bold;
+  color: #ecf0f1;
+}
+
+#bet-amount {
+  padding: 10px;
+  font-size: 16px;
+  border: 2px solid #555;
+  border-radius: 5px;
+  background-color: #34495e;
+  color: white;
+  width: 200px;
+  text-align: center;
+}
+
+#bet-amount:focus {
+  outline: none;
+  border-color: #3498db;
+}
+
+.quick-amounts {
+  margin-top: 10px;
+}
+
+.quick-bet {
+  background-color: #34495e;
+  color: white;
+  border: 1px solid #555;
+  padding: 8px 15px;
+  margin: 0 5px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.quick-bet:hover {
+  background-color: #3498db;
+  border-color: #3498db;
+}
+
+/* 베팅 버튼 */
+.bet-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.btn {
+  padding: 15px 25px;
+  font-weight: bold;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 120px;
+  position: relative;
+  opacity: 0.5;
+  transform: scale(0.95);
+}
+
+.btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+  transform: scale(0.95);
+}
+
+.btn.enabled {
+  opacity: 1;
+  transform: scale(1);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+.btn.enabled:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+}
+
+.btn.enabled:active {
+  transform: scale(0.98);
+}
+
+.btn-label {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.btn-odds {
+  font-size: 12px;
+  opacity: 0.8;
+  margin-top: 2px;
+}
+
+/* 버튼 색상 */
+.bpair { 
+  background: linear-gradient(145deg, #e74c3c, #c0392b);
+  color: white; 
+}
+
+.banker { 
+  background: linear-gradient(145deg, #e67e22, #d35400);
+  color: white; 
+}
+
+.tie { 
+  background: linear-gradient(145deg, #27ae60, #229954);
+  color: white; 
+}
+
+.player { 
+  background: linear-gradient(145deg, #3498db, #2980b9);
+  color: white; 
+}
+
+.ppair { 
+  background: linear-gradient(145deg, #9b59b6, #8e44ad);
+  color: white; 
+}
+
+/* 내 베팅 현황 */
+.my-bets {
+  background: linear-gradient(145deg, #1e3a52, #2c5282);
+  margin: 20px;
+  padding: 15px;
+  border-radius: 10px;
+  border: 1px solid #3498db;
+}
+
+.my-bets h3 {
+  margin: 0 0 10px 0;
+  color: #3498db;
+}
+
+.my-bet-item {
+  background-color: #34495e;
+  padding: 8px;
+  margin: 5px 0;
+  border-radius: 5px;
+  border-left: 4px solid #3498db;
+}
+
+.total-bet {
+  font-weight: bold;
+  color: #f39c12;
+  margin-top: 10px;
+  font-size: 16px;
+}
+
+/* 알림 메시지 */
+.notification {
+  position: fixed;
+  top: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #2c3e50;
+  color: white;
+  padding: 15px 25px;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  transition: all 0.3s ease;
+  z-index: 1000;
+  max-width: 400px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.notification.show {
+  top: 20px;
+}
+
+.notification.success {
+  background-color: #27ae60;
+  border-left: 4px solid #2ecc71;
+}
+
+.notification.error {
+  background-color: #e74c3c;
+  border-left: 4px solid #c0392b;
+}
+
+.notification.warning {
+  background-color: #f39c12;
+  border-left: 4px solid #e67e22;
+  color: #2c3e50;
+}
+
+.notification.info {
+  background-color: #3498db;
+  border-left: 4px solid #2980b9;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .main-board {
+    flex-direction: column;
+    padding: 10px;
+  }
+  
+  .user-slot {
+    flex-direction: row;
+    width: 100%;
+    justify-content: space-around;
+    margin: 10px 0;
+  }
+  
+  .card-row {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .bet-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .btn {
+    width: 90%;
+    max-width: 300px;
+  }
+  
+  .score-line {
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+
+/* 로딩 애니메이션 */
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.6; }
+  100% { opacity: 1; }
+}
+
+.loading {
+  animation: pulse 1.5s infinite;
+}
